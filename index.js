@@ -4,39 +4,37 @@
  * @Author: lhy
  * @Date: 2019-10-30 15:19:49
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2019-10-30 16:08:28
+ * @LastEditTime: 2019-10-30 16:58:18
  */
-import { File } from 'gulp-util';
-import { basename, relative, resolve } from 'path';
-const Transform = require('readable-stream').Transform;
-/** 解析所有文件的moduleID, 生成config后插到入口文件的头部 */
-export function addRequireConfig (option: OptionType) {
-    const mainJs = option.mainJs || 'main.js';
-    const pathConfig: object = {};
-    let mainFile;
+var path= require("path");
+var Transform = require('readable-stream/transform');
+module.exports = function(option) {
+    var mainJs = option.mainJs || 'main.js';
+    var pathConfig = {};
+    var mainFile;
     return new Transform({
         objectMode: true,
-        transform: (file: File, enc, callback) => {
-            const fileName = basename(file.path);
+        transform: function (file, enc, callback) {
+            var fileName = path.basename(file.path);
             if (fileName !== mainJs) {
-                const relativePath = relative(option.sourceDir, file.path);
+                const relativePath = path.relative(option.sourceDir, file.path);
                 const touchModuleId = file.contents.toString().match(/define\(["']([0-9a-zA-Z@_\-/]+)["']/g);
                 const bundlePath = option.deloyDir + relativePath.replace(/.js$/, '');
                 touchModuleId.map((item) => {
-                    const moduleId = item.replace(/^define\("/, '').replace(/"$/, '');
+                    const moduleId = item.replace(/^define\("/,'').replace(/"$/,'');
                     pathConfig[moduleId] = bundlePath;
-                });
-            } else {
+                })
+            }
+            else {
                 mainFile = file;
             }
             callback(null, file);
         },
-        // 将pathConfig对象中的moduleId打印成config文件，塞入主文件main.js
-        flush (callback) {
-            const finalConfig = 'require.config({paths:' + JSON.stringify(pathConfig) + '});\n';
-            mainFile.contents = Buffer.from(finalConfig + mainFile.contents.toString());
+        flush: function (callback) {
+            var finalConfig = 'require.config({paths:' + JSON.stringify(pathConfig) + '});\n';
+            mainFile.contents = new Buffer(finalConfig + mainFile.contents.toString());
             this.push(mainFile);
             callback();
-        }
+        },
     });
 }
