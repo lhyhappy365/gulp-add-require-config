@@ -1,0 +1,23 @@
+{
+  "name": "gulp-add-require-config",
+  "version": "1.0.0",
+  "description": "## Install",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lhyhappy365/gulp-add-require-config.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lhyhappy365/gulp-add-require-config/issues"
+  },
+  "homepage": "https://github.com/lhyhappy365/gulp-add-require-config#readme",
+  "dependencies": {
+    "gulp-util": "^3.0.8",
+    "readable-stream": "^3.3.0"
+  }
+}
